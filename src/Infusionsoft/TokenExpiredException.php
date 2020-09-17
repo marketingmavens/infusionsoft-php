@@ -2,4 +2,7 @@
 
 namespace Infusionsoft;
 
-class TokenExpiredException extends InfusionsoftException {}
+class TokenExpiredException extends InfusionsoftException
+{
+
+}

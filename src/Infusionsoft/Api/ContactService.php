@@ -2,16 +2,18 @@
 
 namespace Infusionsoft\Api;
 
-class ContactService extends AbstractApi {
+class ContactService extends AbstractApi
+{
 
-	/**
-	 * @param array $data
-	 * @return integer
-	 */
-	public function add($data)
-	{
-		return $this->client->request('ContactService.add', $data);
-	}
+    /**
+     * @param array $data
+     *
+     * @return integer
+     */
+    public function add($data)
+    {
+        return $this->client->request('ContactService.add', $data);
+    }
 
 	/**
 	 * @param integer $contactId

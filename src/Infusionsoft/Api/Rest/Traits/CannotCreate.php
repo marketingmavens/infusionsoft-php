@@ -2,12 +2,14 @@
 
 use Infusionsoft\InfusionsoftException;
 
-trait CannotCreate {
+trait CannotCreate
+{
 
-	public function create(array $params = array()) {
-		throw new InfusionsoftException(
-			__CLASS__.' cannot use '.__FUNCTION__.' function.'
-		);
-	}
+    public function create(array $params = [])
+    {
+        throw new InfusionsoftException(
+            __CLASS__ . ' cannot use ' . __FUNCTION__ . ' function.'
+        );
+    }
 
 }

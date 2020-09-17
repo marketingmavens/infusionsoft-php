@@ -1,18 +1,20 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
+
+namespace Infusionsoft\Api\Rest;
 
 use ArrayAccess;
-use Infusionsoft\InfusionsoftException;
 use JsonSerializable;
 use Infusionsoft\Infusionsoft;
-use Infusionsoft\InfusionsoftCollection;
+use Illuminate\Support\Collection;
+use Infusionsoft\Api\Contracts\Jsonable;
+use Infusionsoft\Api\Contracts\Arrayable;
 
-/*
-*   This class is based on Jenssegers Model class, which is in turn based on the Laravel Eloquent Model.
-*   Find more about Laravel's model: http://laravel.com/docs/eloquent
-*   Give Jens some love: https://github.com/jenssegers/laravel-model
-*/
-
-abstract class RestModel implements ArrayAccess, JsonSerializable
+/**
+ * Class RestModel
+ *
+ * @package Infusionsoft\Api\Rest
+ */
+abstract class RestModel implements ArrayAccess, JsonSerializable, Arrayable, Jsonable
 {
 
     protected $client = null;
@@ -23,7 +25,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
 
     protected $primaryKey = 'id';
 
-    protected $optionalProperities = [];
+    protected $optionalProperties = [];
 
     protected $return_key = null;
 
@@ -32,35 +34,35 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
      *
      * @var array
      */
-    protected $attributes = array();
+    protected $attributes = [];
 
     /**
      * The attributes that should be hidden for arrays.
      *
      * @var array
      */
-    protected $hidden = array();
+    protected $hidden = [];
 
     /**
      * The attributes that should be visible in arrays.
      *
      * @var array
      */
-    protected $visible = array();
+    protected $visible = [];
 
     /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $appends = array();
+    protected $appends = [];
 
     /**
      * The attributes that should be casted to native types.
      *
      * @var array
      */
-    protected $casts = array();
+    protected $casts = [];
 
     /**
      * Indicates whether attributes are snake cased on arrays.
@@ -74,19 +76,19 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
      *
      * @var array
      */
-    protected static $booted = array();
+    protected static $booted = [];
 
     /**
      * The cache of the mutated attributes for each class.
      *
      * @var array
      */
-    protected static $mutatorCache = array();
+    protected static $mutatorCache = [];
 
     /**
      * Create a new model instance.
      *
-     * @param  array $attributes
+     * @param array $attributes
      *
      * @return self
      */
@@ -105,7 +107,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     public function getFullUrl($additional = null)
     {
         $url = $this->full_url;
-        if (substr($url, -1) != '/') {
+        if (substr($url, - 1) != '/') {
             $url .= '/';
         }
 
@@ -131,7 +133,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Mock this model from itself.
      *
-     * @param  array $attributes
+     * @param array $attributes
      *
      * @return self
      */
@@ -145,7 +147,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Creates a new object and saves it in storage/API.
      *
-     * @param  array $attributes
+     * @param array $attributes
      *
      * @return self
      */
@@ -171,7 +173,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
                 $this->getFullUrl($this->{$this->primaryKey}),
                 (array)$this->toArray());
         } else {
-            $data = $this->client->restfulRequest('post', $this->getFullUrl(), (array)$this->toArray());
+            $data = $this->client->restfulRequest('post', $this->getFullUrl(),
+                (array)$this->toArray());
         }
 
         $this->fill($data);
@@ -181,10 +184,10 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
 
     public function with($optional)
     {
-        if (!is_array($optional) && is_string($optional)) {
-            $this->optionalProperities[] = $optional;
+        if ( ! is_array($optional) && is_string($optional)) {
+            $this->optionalProperties[] = $optional;
         } else {
-            $this->optionalProperities = $optional;
+            $this->optionalProperties = $optional;
         }
 
         return $this;
@@ -193,9 +196,10 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     public function find($id)
     {
 
-        if (!empty($this->optionalProperities)) {
+        if ( ! empty($this->optionalProperties)) {
             $data = $this->client->restfulRequest('get',
-                $this->getFullUrl($id), ['optional_properties' => implode(",", $this->optionalProperities)]);
+                $this->getFullUrl($id),
+                ['optional_properties' => implode(",", $this->optionalProperties)]);
         } else {
             $data = $this->client->restfulRequest('get', $this->getFullUrl($id));
         }
@@ -239,7 +243,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
 
     public function get()
     {
-        if (!empty($this->where)) {
+        if ( ! empty($this->where)) {
             $data = $this->client->restfulRequest('get', $this->getIndexUrl(), $this->where);
         } else {
             $data = $this->client->restfulRequest('get', $this->getIndexUrl());
@@ -258,15 +262,14 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
 
     public function first()
     {
-
         $this->where('limit', 1);
 
         $params = $this->where;
-        if (!empty($this->optionalProperities)) {
-          $params['optional_properties'] = implode(',', $this->optionalProperities);
+        if ( ! empty($this->optionalProperties)) {
+            $params['optional_properties'] = implode(',', $this->optionalProperties);
         }
 
-        if (!empty($params)) {
+        if ( ! empty($params)) {
             $data = $this->client->restfulRequest('get', $this->getIndexUrl(), $params);
         } else {
             $data = $this->client->restfulRequest('get', $this->getIndexUrl());
@@ -279,13 +282,12 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
         }
 
         if ($data['count'] === 0) {
-            throw new InfusionsoftException('No Results Found');
+            return null;
         }
 
         $collection = $this->collect($data, $cursor);
 
         return $collection[0];
-
     }
 
     public function count()
@@ -312,13 +314,13 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
         return $collection;
     }
 
-	public function model()
-	{
-		$data = $this->client->restfulRequest('get', $this->getFullUrl('model'));
-		$this->fill($data);
+    public function model()
+    {
+        $data = $this->client->restfulRequest('get', $this->getFullUrl('model'));
+        $this->fill($data);
 
-		return $this;
-	}
+        return $this;
+    }
 
 
     public function collect(array $array, $cursor = [])
@@ -327,7 +329,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
 
         $base_object = $array;
 
-        if (!empty($this->return_key)) {
+        if ( ! empty($this->return_key)) {
             $base_object = $array[$this->return_key];
         }
 
@@ -336,7 +338,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
             array_push($items, $thing->mock($item));
         }
 
-        return new InfusionsoftCollection($items);
+        return new Collection($items);
     }
 
     /**
@@ -348,7 +350,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     {
         $class = get_class($this);
 
-        if (!isset(static::$booted[$class])) {
+        if ( ! isset(static::$booted[$class])) {
             static::$booted[$class] = true;
 
             static::boot();
@@ -384,7 +386,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Fill the model with an array of attributes.
      *
-     * @param  array $attributes
+     * @param array $attributes
      *
      * @return self
      */
@@ -400,12 +402,12 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Create a new instance of the given model.
      *
-     * @param  array $attributes
-     * @param  bool $exists
+     * @param array $attributes
+     * @param bool  $exists
      *
      * @return self
      */
-    public function newInstance($attributes = array())
+    public function newInstance($attributes = [])
     {
         $model = new static((array)$attributes);
 
@@ -415,7 +417,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Create a collection of models from plain arrays.
      *
-     * @param  array $items
+     * @param array $items
      *
      * @return array
      */
@@ -477,7 +479,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Set the hidden attributes for the model.
      *
-     * @param  array $hidden
+     * @param array $hidden
      *
      * @return void
      */
@@ -489,7 +491,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Add hidden attributes for the model.
      *
-     * @param  array|string|null $attributes
+     * @param array|string|null $attributes
      *
      * @return void
      */
@@ -513,7 +515,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Set the visible attributes for the model.
      *
-     * @param  array $visible
+     * @param array $visible
      *
      * @return void
      */
@@ -525,7 +527,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Add visible attributes for the model.
      *
-     * @param  array|string|null $attributes
+     * @param array|string|null $attributes
      *
      * @return void
      */
@@ -539,7 +541,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Set the accessors to append to model arrays.
      *
-     * @param  array $appends
+     * @param array $appends
      *
      * @return void
      */
@@ -551,7 +553,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Convert the model instance to JSON.
      *
-     * @param  int $options
+     * @param int $options
      *
      * @return string
      */
@@ -595,7 +597,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
         // the mutator for the attribute. We cache off every mutated attributes so
         // we don't have to constantly check on attributes that actually change.
         foreach ($mutatedAttributes as $key) {
-            if (!array_key_exists($key, $attributes)) {
+            if ( ! array_key_exists($key, $attributes)) {
                 continue;
             }
 
@@ -606,7 +608,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
         // the values to their appropriate type. If the attribute has a mutator we
         // will not perform the cast on those attributes to avoid any confusion.
         foreach ($this->casts as $key => $value) {
-            if (!array_key_exists($key, $attributes) || in_array($key, $mutatedAttributes)) {
+            if ( ! isset($attributes[$key]) || in_array($key, $mutatedAttributes)) {
                 continue;
             }
 
@@ -640,7 +642,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
      */
     protected function getArrayableAppends()
     {
-        if (!count($this->appends)) {
+        if ( ! count($this->appends)) {
             return [];
         }
 
@@ -650,7 +652,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get an attribute array of all arrayable values.
      *
-     * @param  array $values
+     * @param array $values
      *
      * @return array
      */
@@ -666,13 +668,13 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get an attribute from the model.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return mixed
      */
     public function getAttribute($key)
     {
-        $inAttributes = array_key_exists($key, $this->attributes);
+        $inAttributes = isset($this->attributes[$key]);
 
         // If the key references an attribute, we can just go ahead and return the
         // plain attribute value from the model. This allows every attribute to
@@ -685,7 +687,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get a plain attribute (not a relationship).
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -713,13 +715,13 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get an attribute from the $attributes array.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return mixed
      */
     protected function getAttributeFromArray($key)
     {
-        if (array_key_exists($key, $this->attributes)) {
+        if (isset($this->attributes[$key])) {
             return $this->attributes[$key];
         }
     }
@@ -727,7 +729,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Determine if a get mutator exists for an attribute.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return bool
      */
@@ -739,8 +741,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get the value of an attribute using its mutator.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param string $key
+     * @param mixed  $value
      *
      * @return mixed
      */
@@ -752,8 +754,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get the value of an attribute using its mutator for array conversion.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param string $key
+     * @param mixed  $value
      *
      * @return mixed
      */
@@ -761,25 +763,25 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     {
         $value = $this->mutateAttribute($key, $value);
 
-        return $value instanceof ArrayableInterface ? $value->toArray() : $value;
+        return $value instanceof Arrayable ? $value->toArray() : $value;
     }
 
     /**
      * Determine whether an attribute should be casted to a native type.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return bool
      */
     protected function hasCast($key)
     {
-        return array_key_exists($key, $this->casts);
+        return isset($this->casts[$key]);
     }
 
     /**
      * Determine whether a value is JSON castable for inbound manipulation.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return bool
      */
@@ -795,7 +797,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get the type of cast for a model attribute.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return string
      */
@@ -807,8 +809,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Cast an attribute to a native PHP type.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param string $key
+     * @param mixed  $value
      *
      * @return mixed
      */
@@ -844,8 +846,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Set a given attribute on the model.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param string $key
+     * @param mixed  $value
      *
      * @return void
      */
@@ -870,7 +872,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Determine if a set mutator exists for an attribute.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return bool
      */
@@ -910,7 +912,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     {
         $class = get_class($this);
 
-        if (!isset(static::$mutatorCache[$class])) {
+        if ( ! isset(static::$mutatorCache[$class])) {
             static::cacheMutatedAttributes($class);
         }
 
@@ -926,13 +928,14 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
      */
     public static function cacheMutatedAttributes($class)
     {
-        $mutatedAttributes = array();
+        $mutatedAttributes = [];
 
         // Here we will extract all of the mutated attributes so that we can quickly
         // spin through them after we export models to their array form, which we
         // need to be fast. This'll let us know the attributes that can mutate.
         foreach (get_class_methods($class) as $method) {
-            if (strpos($method, 'Attribute') !== false && preg_match('/^get(.+)Attribute$/', $method, $matches)) {
+            if (strpos($method, 'Attribute') !== false && preg_match('/^get(.+)Attribute$/',
+                    $method, $matches)) {
                 if (static::$snakeAttributes) {
                     $matches[1] = snake_case($matches[1]);
                 }
@@ -947,7 +950,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Dynamically retrieve attributes on the model.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return mixed
      */
@@ -959,8 +962,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Dynamically set attributes on the model.
      *
-     * @param  string $key
-     * @param  mixed $value
+     * @param string $key
+     * @param mixed  $value
      *
      * @return void
      */
@@ -972,7 +975,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Determine if the given attribute exists.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
      *
      * @return bool
      */
@@ -984,7 +987,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Get the value for a given offset.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
      *
      * @return mixed
      */
@@ -996,8 +999,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Set the value for a given offset.
      *
-     * @param  mixed $offset
-     * @param  mixed $value
+     * @param mixed $offset
+     * @param mixed $value
      *
      * @return void
      */
@@ -1009,7 +1012,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Unset the value for a given offset.
      *
-     * @param  mixed $offset
+     * @param mixed $offset
      *
      * @return void
      */
@@ -1021,19 +1024,19 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Determine if an attribute exists on the model.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return void
      */
     public function __isset($key)
     {
-        return ((isset($this->attributes[$key]) || isset($this->relations[$key])) || ($this->hasGetMutator($key) && !is_null($this->getAttributeValue($key))));
+        return ((isset($this->attributes[$key]) || isset($this->relations[$key])) || ($this->hasGetMutator($key) && ! is_null($this->getAttributeValue($key))));
     }
 
     /**
      * Unset an attribute on the model.
      *
-     * @param  string $key
+     * @param string $key
      *
      * @return void
      */
@@ -1045,8 +1048,8 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     /**
      * Handle dynamic static method calls into the method.
      *
-     * @param  string $method
-     * @param  array $parameters
+     * @param string $method
+     * @param array  $parameters
      *
      * @return mixed
      */
@@ -1054,7 +1057,7 @@ abstract class RestModel implements ArrayAccess, JsonSerializable
     {
         $instance = new static;
 
-        return call_user_func_array(array($instance, $method), $parameters);
+        return call_user_func_array([$instance, $method], $parameters);
     }
 
     /**

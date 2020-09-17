@@ -1,4 +1,5 @@
-.DS_Store
+.idea
 /report
 /vendor
-.idea
+.DS_Store
+.phpunit.result.cachec

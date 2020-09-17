@@ -45,11 +45,11 @@ if(empty(session_id();)) session_start();
 
 require_once 'vendor/autoload.php';
 
-$infusionsoft = new \Infusionsoft\Infusionsoft(array(
+$infusionsoft = new \Infusionsoft\Infusionsoft([
 	'clientId'     => 'XXXXXXXXXXXXXXXXXXXXXXXX',
 	'clientSecret' => 'XXXXXXXXXX',
 	'redirectUri'  => 'http://example.com/',
-));
+]);
 
 // If the serialized token is available in the session storage, we tell the SDK
 // to use that token for subsequent requests.
@@ -83,7 +83,7 @@ require_once 'vendor/autoload.php';
 // As of v1.3 contacts defaults to rest
 $infusionsoft->setToken($myTokenObject);
 
-$infusionsoft->contacts('xml')->add(array('FirstName' => 'John', 'LastName' => 'Doe'));
+$infusionsoft->contacts('xml')->add(['FirstName' => 'John', 'LastName' => 'Doe']);
 
 ```
 

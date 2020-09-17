@@ -4,6 +4,7 @@ namespace Infusionsoft\Http;
 
 use Infusionsoft\InfusionsoftException;
 
-class HttpException extends InfusionsoftException {
+class HttpException extends InfusionsoftException
+{
 
 }

@@ -2,11 +2,12 @@
 
 namespace Infusionsoft;
 
-use Infusionsoft\Http\CurlClient;
 use Mockery as m;
-use Psr\Log\NullLogger;
+use PHPUnit\Framework\TestCase;
+use Infusionsoft\Http\CurlClient;
+use Infusionsoft\Http\InfusionsoftClient;
 
-class InfusionsoftTest extends \PHPUnit_Framework_TestCase
+class InfusionsoftTest extends TestCase
 {
 
     /**
@@ -14,13 +15,13 @@ class InfusionsoftTest extends \PHPUnit_Framework_TestCase
      */
     protected $ifs;
 
-    public function setUp()
+    public function setUp(): void
     {
-        $this->ifs = new Infusionsoft(array(
-            'clientId'     => 'foo',
-            'clientSecret' => 'bar',
-            'redirectUri'  => 'http://example.com/'
-        ));
+        $this->ifs = new Infusionsoft([
+            'client_id'     => 'foo',
+            'client_secret' => 'bar',
+            'redirect_uri'  => 'http://example.com/'
+        ]);
     }
 
     public function testMainClass()
@@ -85,10 +86,6 @@ class InfusionsoftTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://example.com/', $this->ifs->getToken());
     }
 
-    public function testDefaultHttpLogAdapter()
-    {
-        $this->assertInstanceOf('Infusionsoft\Http\ArrayLogger', $this->ifs->getHttpLogAdapter());
-    }
 
     public function testSettingClientId()
     {
@@ -110,12 +107,12 @@ class InfusionsoftTest extends \PHPUnit_Framework_TestCase
 
     public function testSettingTokenAndGettingProperties()
     {
-        $this->ifs->setToken(new Token(array(
+        $this->ifs->setToken(new Token([
             'access_token'  => 'foo',
             'refresh_token' => 'bar',
             'expires_in'    => 1,
             'key'           => 'value'
-        )));
+        ]));
         $this->assertEquals('foo', $this->ifs->getToken()->getAccessToken());
         $this->assertEquals('bar', $this->ifs->getToken()->getRefreshToken());
         $this->assertEquals(time() + 1, $this->ifs->getToken()->getEndOfLife());
@@ -123,28 +120,19 @@ class InfusionsoftTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('value', $extra['key']);
     }
 
-    public function testSettingHttpLogAdapter()
-    {
 
-        $this->ifs->setHttpLogAdapter(new NullLogger());
-        $this->assertInstanceOf('Psr\Log\NullLogger', $this->ifs->getHttpLogAdapter());
-    }
-
-    public function testDefaultHttpClientShouldBeGuzzle()
+    public function testDefaultHttpClientShouldBeInfusionsoftClient()
     {
-        $this->assertInstanceOf('Infusionsoft\Http\GuzzleHttpClient', $this->ifs->getHttpClient());
-    }
-
-    public function testSettingHttpClientToCurl()
-    {
-        $this->ifs->setHttpClient(new CurlClient());
-        $this->assertInstanceOf('Infusionsoft\Http\CurlClient', $this->ifs->getHttpClient());
+        $this->assertInstanceOf(InfusionsoftClient::class, $this->ifs->getHttpClient());
     }
 
     public function testRequestingAccessTokenSetsAccessToken()
     {
-        $client = m::mock('Infusionsoft\Http\GuzzleHttpClient');
-        $client->shouldReceive('request')->once()->withAnyArgs()->andReturn(json_encode(['access_token' => 'access_token']));
+        $client = m::mock(InfusionsoftClient::class);
+        $client->shouldReceive('request')
+            ->once()
+            ->withAnyArgs()
+            ->andReturn(json_encode(['access_token' => 'access_token']));
 
         $this->ifs->setClientId('foo');
         $this->ifs->setClientSecret('bar');
@@ -160,12 +148,12 @@ class InfusionsoftTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->ifs->isTokenExpired());
 
         //token is set and still not expired
-        $token = new Token(array('access_token' => '', 'refresh_token' => '', 'expires_in' => 5));
+        $token = new Token(['access_token' => '', 'refresh_token' => '', 'expires_in' => 5]);
         $this->ifs->setToken($token);
         $this->assertFalse($this->ifs->isTokenExpired());
 
         //token is set but expired
-        $token = new Token(array('access_token' => '', 'refresh_token' => '', 'expires_in' => -5));
+        $token = new Token(['access_token' => '', 'refresh_token' => '', 'expires_in' => - 5]);
         $this->ifs->setToken($token);
         $this->assertTrue($this->ifs->isTokenExpired());
     }

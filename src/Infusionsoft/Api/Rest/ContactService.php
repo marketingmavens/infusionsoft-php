@@ -1,4 +1,6 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
+
+namespace Infusionsoft\Api\Rest;
 
 use Infusionsoft\Api\Rest\Traits\CannotSync;
 use Infusionsoft\Infusionsoft;
@@ -6,6 +8,7 @@ use Infusionsoft\InfusionsoftException;
 
 class ContactService extends RestModel
 {
+
     use CannotSync;
 
     public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/contacts';

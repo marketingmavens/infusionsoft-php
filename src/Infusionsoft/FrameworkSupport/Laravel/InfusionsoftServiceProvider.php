@@ -1,29 +1,17 @@
-<?php namespace Infusionsoft\FrameworkSupport\Laravel;
+<?php
 
-use Illuminate\Support\ServiceProvider;
+namespace Infusionsoft\FrameworkSupport\Laravel;
+
 use Infusionsoft\Infusionsoft;
+use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class InfusionsoftServiceProvider
+ *
+ * @package Infusionsoft\FrameworkSupport\Laravel
+ */
 class InfusionsoftServiceProvider extends ServiceProvider
 {
-
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Bootstrap the application events.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $config = __DIR__ . '/config/config.php';
-        $this->mergeConfigFrom($config, 'infusionsoft');
-        $this->publishes([$config => config_path('infusionsoft.php')]);
-    }
 
     /**
      * Register the service provider.
@@ -33,9 +21,7 @@ class InfusionsoftServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('infusionsoft', function ($app) {
-
-            return new Infusionsoft(config('infusionsoft'));
-
+            return new Infusionsoft();
         });
     }
 
@@ -46,7 +32,9 @@ class InfusionsoftServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('infusionsoft');
+        return [
+            'infusionsoft'
+        ];
     }
 
 }

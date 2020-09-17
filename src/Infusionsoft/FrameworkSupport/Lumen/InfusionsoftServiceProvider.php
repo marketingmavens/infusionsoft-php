@@ -1,56 +1,40 @@
-<?php namespace Infusionsoft\FrameworkSupport\Lumen;
+<?php
 
-use Illuminate\Support\ServiceProvider;
+namespace Infusionsoft\FrameworkSupport\Lumen;
+
 use Infusionsoft\Infusionsoft;
+use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class InfusionsoftServiceProvider
+ *
+ * @package Infusionsoft\FrameworkSupport\Lumen
+ */
 class InfusionsoftServiceProvider extends ServiceProvider
 {
 
-	/**
-	 * Indicates if loading of the provider is deferred.
-	 *
-	 * @var bool
-	 */
-	protected $defer = false;
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->app->singleton('infusionsoft', function ($app) {
+            return new Infusionsoft();
+        });
+    }
 
-	/**
-	 * Bootstrap the application events.
-	 *
-	 * @return void
-	 */
-	public function boot()
-	{
-
-	}
-
-	/**
-	 * Register the service provider.
-	 *
-	 * @return void
-	 */
-	public function register()
-	{
-		$this->app->singleton('infusionsoft', function ($app) {
-
-			$config = [
-				'clientId' => env('INFUSIONSOFT_CLIENT_ID'),
-				'clientSecret' => env('INFUSIONSOFT_SECRET'),
-				'redirectUri' => env('INFUSIONSOFT_REDIRECT_URL'),
-			];
-
-			return new Infusionsoft($config);
-
-		});
-	}
-
-	/**
-	 * Get the services provided by the provider.
-	 *
-	 * @return array
-	 */
-	public function provides()
-	{
-		return array('infusionsoft');
-	}
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'infusionsoft'
+        ];
+    }
 
 }
