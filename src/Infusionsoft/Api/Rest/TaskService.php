@@ -1,15 +1,18 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
 
-class TaskService extends RestModel {
+namespace Infusionsoft\Api\Rest;
 
-	public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/tasks';
-	public $return_key = 'tasks';
+class TaskService extends RestModel
+{
 
-	public function getIndexUrl()
-	{
-		$url = $this->full_url.'/search';
+    public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/tasks';
+    public $return_key = 'tasks';
 
-		return $url;
-	}
+    public function getIndexUrl()
+    {
+        $url = $this->full_url . '/search';
+
+        return $url;
+    }
 
 }

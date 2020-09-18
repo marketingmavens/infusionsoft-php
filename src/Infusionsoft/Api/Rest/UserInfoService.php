@@ -1,4 +1,6 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
+
+namespace Infusionsoft\Api\Rest;
 
 use Infusionsoft\Api\Rest\Traits\CannotCreate;
 use Infusionsoft\Api\Rest\Traits\CannotDelete;
@@ -10,13 +12,13 @@ use Infusionsoft\Api\Rest\Traits\CannotWhere;
 
 class UserInfoService extends RestModel
 {
+
     use CannotList, CannotWhere, CannotSync, CannotSave, CannotFind, CannotDelete, CannotCreate;
 
     public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/oauth/connect/userinfo';
 
     public function get()
     {
-
         $data = $this->client->restfulRequest('get', $this->getIndexUrl());
 
         return $data;

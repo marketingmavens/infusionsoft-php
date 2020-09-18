@@ -1,15 +1,19 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
 
-class AppointmentService extends RestModel {
+namespace Infusionsoft\Api\Rest;
 
-	public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/appointments';
-	public $return_key = 'appointments';
+class AppointmentService extends RestModel
+{
 
-	public function getIndexUrl()
-	{
-		$url = $this->full_url.'/search';
+    public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/appointments';
 
-		return $url;
-	}
+    public $return_key = 'appointments';
+
+    public function getIndexUrl()
+    {
+        $url = $this->full_url . '/search';
+
+        return $url;
+    }
 
 }

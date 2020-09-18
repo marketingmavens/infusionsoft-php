@@ -1,4 +1,6 @@
-<?php namespace Infusionsoft\Api\Rest\Traits;
+<?php
+
+namespace Infusionsoft\Api\Rest\Traits;
 
 use Infusionsoft\InfusionsoftException;
 

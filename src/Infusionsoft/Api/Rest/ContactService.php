@@ -2,9 +2,9 @@
 
 namespace Infusionsoft\Api\Rest;
 
-use Infusionsoft\Api\Rest\Traits\CannotSync;
 use Infusionsoft\Infusionsoft;
 use Infusionsoft\InfusionsoftException;
+use Infusionsoft\Api\Rest\Traits\CannotSync;
 
 class ContactService extends RestModel
 {
@@ -47,10 +47,11 @@ class ContactService extends RestModel
             throw new InfusionsoftException('A maximum of 100 tag ids can be added at once');
         }
 
-        $tags         = new \stdClass;
+        $tags = new \stdClass;
         $tags->tagIds = $tagIds;
 
-        $response = $this->client->restfulRequest('post', $this->getFullUrl($this->id . '/tags'), $tags);
+        $response = $this->client->restfulRequest('post', $this->getFullUrl($this->id . '/tags'),
+            $tags);
 
         return $response;
 
@@ -60,7 +61,8 @@ class ContactService extends RestModel
     {
         $this->mock($attributes);
         if ($dupCheck) {
-            $data = $this->client->restfulRequest('put', $this->getFullUrl($this->id), (array)$this->toArray());
+            $data = $this->client->restfulRequest('put', $this->getFullUrl($this->id),
+                (array)$this->toArray());
             $this->fill($data);
         } else {
             $this->save();
@@ -79,7 +81,8 @@ class ContactService extends RestModel
 
         $tagIds = ['ids' => implode(",", $tagIds)];
 
-        $response = $this->client->restfulRequest('delete', $this->getFullUrl($this->id . '/tags'), $tagIds);
+        $response = $this->client->restfulRequest('delete', $this->getFullUrl($this->id . '/tags'),
+            $tagIds);
 
         return $response;
 

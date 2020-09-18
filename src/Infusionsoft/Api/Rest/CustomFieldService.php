@@ -1,12 +1,15 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
 
-use Infusionsoft\Api\Rest\Traits\CannotCreate;
-use Infusionsoft\Api\Rest\Traits\CannotDelete;
-use Infusionsoft\Api\Rest\Traits\CannotModel;
+namespace Infusionsoft\Api\Rest;
+
 use Infusionsoft\Api\Rest\Traits\CannotSave;
 use Infusionsoft\Api\Rest\Traits\CannotSync;
+use Infusionsoft\Api\Rest\Traits\CannotModel;
+use Infusionsoft\Api\Rest\Traits\CannotCreate;
+use Infusionsoft\Api\Rest\Traits\CannotDelete;
 
-class CustomFieldService extends RestModel {
+class CustomFieldService extends RestModel
+{
 
     use CannotDelete, CannotSync, CannotSave, CannotCreate, CannotModel;
 

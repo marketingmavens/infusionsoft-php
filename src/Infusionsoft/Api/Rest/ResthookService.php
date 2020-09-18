@@ -1,4 +1,6 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
+
+namespace Infusionsoft\Api\Rest;
 
 use Infusionsoft\Infusionsoft;
 
@@ -7,7 +9,7 @@ class ResthookService extends RestModel
 
     public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/hooks';
 
-    public $hidden = ['key','status'];
+    public $hidden = ['key', 'status'];
 
 
     public function __construct(Infusionsoft $client)
@@ -40,7 +42,8 @@ class ResthookService extends RestModel
             if (substr($key, 0, 5) <> 'HTTP_') {
                 continue;
             }
-            $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+            $header = str_replace(' ', '-',
+                ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
             $headers[$header] = $value;
         }
 

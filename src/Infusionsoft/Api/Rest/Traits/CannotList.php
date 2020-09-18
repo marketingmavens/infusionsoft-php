@@ -1,12 +1,16 @@
-<?php namespace Infusionsoft\Api\Rest\Traits;
+<?php
+
+namespace Infusionsoft\Api\Rest\Traits;
 
 use Infusionsoft\InfusionsoftException;
 
-trait CannotList {
+trait CannotList
+{
 
-    public function all() {
+    public function all()
+    {
         throw new InfusionsoftException(
-            __CLASS__.' cannot use '.__FUNCTION__.' function.'
+            __CLASS__ . ' cannot use ' . __FUNCTION__ . ' function.'
         );
     }
 

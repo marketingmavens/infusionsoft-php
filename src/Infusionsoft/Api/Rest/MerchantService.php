@@ -12,6 +12,7 @@ use Infusionsoft\Api\Rest\Traits\CannotWhere;
 
 class MerchantService extends RestModel
 {
+
     use CannotCreate, CannotDelete, CannotFind, CannotModel, CannotSave, CannotSync, CannotWhere;
 
     public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/merchants';

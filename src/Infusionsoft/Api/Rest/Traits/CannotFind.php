@@ -1,13 +1,17 @@
-<?php namespace Infusionsoft\Api\Rest\Traits;
+<?php
+
+namespace Infusionsoft\Api\Rest\Traits;
 
 use Infusionsoft\InfusionsoftException;
 
-trait CannotFind {
+trait CannotFind
+{
 
-	public function find($id) {
-		throw new InfusionsoftException(
-			__CLASS__.' cannot use '.__FUNCTION__.' function.'
-		);
-	}
+    public function find($id)
+    {
+        throw new InfusionsoftException(
+            __CLASS__ . ' cannot use ' . __FUNCTION__ . ' function.'
+        );
+    }
 
 }

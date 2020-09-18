@@ -1,4 +1,6 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
+
+namespace Infusionsoft\Api\Rest;
 
 use Infusionsoft\Api\Rest\Traits\CannotCreate;
 use Infusionsoft\Api\Rest\Traits\CannotDelete;
@@ -12,6 +14,7 @@ use Infusionsoft\InfusionsoftException;
 
 class TagService extends RestModel
 {
+
     use CannotSync, CannotDelete, CannotModel;
 
     public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/tags';
@@ -25,7 +28,8 @@ class TagService extends RestModel
 
     public function contacts($where = [])
     {
-        $data = $this->client->restfulRequest('get', $this->getFullUrl($this->id . '/contacts'), $where);
+        $data = $this->client->restfulRequest('get', $this->getFullUrl($this->id . '/contacts'),
+            $where);
         $this->fill($data);
 
         return $this;
@@ -41,7 +45,8 @@ class TagService extends RestModel
 
         $contactIds = ['ids' => implode(",", $contactIds)];
 
-        $response = $this->client->restfulRequest('delete', $this->getFullUrl($this->id . '/contacts'), $contactIds);
+        $response = $this->client->restfulRequest('delete',
+            $this->getFullUrl($this->id . '/contacts'), $contactIds);
 
         return $response;
     }
@@ -54,10 +59,11 @@ class TagService extends RestModel
             throw new InfusionsoftException('A maximum of 100 contact ids can be modified at once');
         }
 
-        $contacts      = new \stdClass();
+        $contacts = new \stdClass();
         $contacts->ids = $contactIds;
 
-        $response = $this->client->restfulRequest('post', $this->getFullUrl($this->id . '/contacts'), $contacts);
+        $response = $this->client->restfulRequest('post',
+            $this->getFullUrl($this->id . '/contacts'), $contacts);
 
         return $response;
     }

@@ -1,12 +1,13 @@
-<?php namespace Infusionsoft\Api\Rest;
+<?php
 
+namespace Infusionsoft\Api\Rest;
+
+use Infusionsoft\Infusionsoft;
+use Infusionsoft\Api\Rest\Traits\CannotSync;
+use Infusionsoft\Api\Rest\Traits\CannotSave;
+use Infusionsoft\Api\Rest\Traits\CannotModel;
 use Infusionsoft\Api\Rest\Traits\CannotCreate;
 use Infusionsoft\Api\Rest\Traits\CannotDelete;
-use Infusionsoft\Api\Rest\Traits\CannotModel;
-use Infusionsoft\Api\Rest\Traits\CannotSave;
-use Infusionsoft\Api\Rest\Traits\CannotSync;
-use Infusionsoft\Infusionsoft;
-use Infusionsoft\InfusionsoftException;
 
 class CampaignService extends RestModel
 {

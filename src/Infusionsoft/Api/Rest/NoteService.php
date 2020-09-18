@@ -5,6 +5,7 @@ use Infusionsoft\Api\Rest\Traits\CannotSync;
 
 class NoteService extends RestModel
 {
+
     use CannotSync, CannotModel;
 
     public $full_url = 'https://api.infusionsoft.com/crm/rest/v1/notes';
