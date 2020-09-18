@@ -1,6 +1,6 @@
 <?php
 
-namespace Infusionsoft;
+namespace Infusionsoft\Actual\XML;
 
 use PHPUnit\Framework\TestCase;
 use Illuminate\Support\Collection;
